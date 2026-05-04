@@ -16,6 +16,7 @@ function getImagesByQuery(query) {
             safesearch: true,
         }
     })
+    .then(response => response.data);
 }
 
 export { getImagesByQuery };

@@ -1,7 +1,5 @@
 import iziToast from "izitoast";
-import SimpleLightbox from "simplelightbox";
 
-import "simplelightbox/dist/simple-lightbox.min.css";
 import "izitoast/dist/css/iziToast.min.css";
 
 import { getImagesByQuery } from "./js/pixabay-api";
@@ -12,10 +10,6 @@ const gallery = document.querySelector(".gallery");
 
 const searchInput = document.querySelector(`input[name="search-text"]`);
 const loader = document.querySelector(".loader");
-const lightbox = new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 250,
-});
 
 
 form.addEventListener("submit", handleSubmit);
@@ -26,9 +20,20 @@ function handleSubmit(event) {
     showLoader();
     const searchText = searchInput.value.trim();
     event.target.reset();
+ 
+    if (searchText.length === 0) {
+        iziToast.show({
+                    message: 'Sorry, there are no images matching your search query. Please try again!',
+                    color: 'red',
+                    position: 'topRight',
+        });
+        hideLoader();
+        return;
+    }
 
     getImagesByQuery(searchText)
-        .then(({ data }) => {
+        .then((data) => {
+            console.log(data)
             if (data.hits.length === 0) {
                 iziToast.show({
                     message: 'Sorry, there are no images matching your search query. Please try again!',
@@ -39,7 +44,6 @@ function handleSubmit(event) {
             }
 
             createGallery(data.hits);
-            lightbox.refresh();
         })
         .catch(error => {
             iziToast.show({
